@@ -20,7 +20,7 @@ void Engine::fill(AssessMoveData& moveData, uint8_t depth) {
 	vector<future<AssessMoveData>> futures;
 
 	for (uint8_t i = 0; i < len; i++) {
-		futures.emplace_back(threadPool.add_task([=, &field]() -> AssessMoveData {
+		futures.emplace_back(threadPool.enqueue([=, &field]() -> AssessMoveData {
 			AssessMoveData temp(field);
 			memcpy(temp.field, field, 64);
 
