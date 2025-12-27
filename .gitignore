@@ -26,6 +26,7 @@ lib/
 .vs/
 .vscode/
 .idea/
+.venv/
 *.user
 *.sln
 *.vcxproj
@@ -33,6 +34,7 @@ lib/
 *.vcxproj.user
 *.cmake
 CMakeLists.txt.user
+CMakeUserPresets.json
 
 *.swp
 *~

@@ -1,4 +1,5 @@
 #include "forms.h"
+
 #include <mutex>
 #include <chrono>
 
@@ -13,6 +14,7 @@
 #define IMPOSSIBLE_DEPTH 12
 
 using std::pair, std::lock_guard, std::mutex;
+using namespace sf;
 
 TForm::TForm(Vector2u windowSize, const string& title)
     : window(VideoMode(windowSize), title, Style::Close) {

@@ -1,24 +1,40 @@
+#include "forms.h"
+
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
-#include "forms.h"
+#include "spdlog/spdlog.h"
+
+#include <iostream>
+#include <fstream>
 
 //TcpSocket socket;
 //TcpListener listener;
 
-using sf::Font, sf::Image;
-
-Font font;
-Image icon;
+sf::Font font;
+sf::Image icon;
 
 int main()
 {
-    if (!icon.loadFromFile("Image/icon.png")) {
-        return 1;
+    constexpr auto kIconPath = "resources/Images/icon.png";
+    constexpr auto kFontPath = "resources/Fonts/arialmt.ttf";
+
+    spdlog::info("Program started");
+
+    if (!icon.loadFromFile(kIconPath)) 
+    {
+        spdlog::error("Icon not found by path: {}", kIconPath);
+        return -1;
     }
 
-    if (!font.openFromFile("Fonts/arialmt.ttf")) {
-        return 2;
+    spdlog::info("Icon loaded succesfully by path: {}", kIconPath);
+
+    if (!font.openFromFile(kFontPath)) 
+    {
+        spdlog::error("Font not found by path: {}", kFontPath);
+        return -1;
     }
+
+    spdlog::info("Font loaded succesfully by path: {}", kFontPath);
 
     TStartForm mainForm;
     mainForm.poll();

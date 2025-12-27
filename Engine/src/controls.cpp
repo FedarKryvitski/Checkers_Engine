@@ -63,10 +63,10 @@ void Board::draw(RenderWindow& window) const {
     CircleShape checkerCircle(checkerRadius);
     CircleShape innerCircle(innerRadius);
 
-    constexpr Color whiteColor(230, 230, 230);
-    constexpr Color blackColor(30, 30, 30);
-    constexpr Color boardFirstColor(233, 237, 204);
-    constexpr Color boardSecondColor(119, 153, 84);
+    const Color whiteColor(230, 230, 230);
+    const Color blackColor(30, 30, 30);
+    const Color boardFirstColor(233, 237, 204);
+    const Color boardSecondColor(119, 153, 84);
 
     const auto& [x, y] = position;
 
