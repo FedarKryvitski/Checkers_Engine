@@ -1,10 +1,13 @@
 #pragma once
-#include <SFML/Graphics.hpp>
+
 #include "Engine.h"
+
+#include <SFML/Graphics.hpp>
 #include <array>
 #include <string>
 #include <thread>
 #include <memory>
+#include <optional>
 
 using namespace sf;
 

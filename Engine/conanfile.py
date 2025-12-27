@@ -6,8 +6,9 @@ class ExampleRecipe(ConanFile):
     generators = "CMakeDeps", "CMakeToolchain"
 
     def requirements(self):
-        self.requires("sfml/2.6.2")
+        self.requires("sfml/3.0.2")
         self.requires("nlohmann_json/3.11.3")
+        self.requires("spdlog/1.12.0")
 
     def layout(self):
         cmake_layout(self)

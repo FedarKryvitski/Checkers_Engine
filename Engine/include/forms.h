@@ -1,7 +1,10 @@
 #pragma once
-#include <SFML/Network.hpp>
+
 #include "controls.h"
 #include "GameControllers.h"
+
+#include <SFML/Network.hpp>
+
 #include <array>
 #include <mutex>
 #include <vector>
