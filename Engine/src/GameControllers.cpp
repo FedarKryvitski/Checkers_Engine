@@ -1,6 +1,5 @@
 #include "GameControllers.h"
 
-
 void GameController::getData(AssessMoveData& source) {
     memcpy(field, source.field, 64);
     type = source.type;
@@ -32,7 +31,7 @@ GameController::GameController() {
     //gameMoves.push_back(temp);
 }
 
-MOVE_RESULT GameController::playerMove(tuple<uint8_t, uint8_t, uint8_t, uint8_t> moveCoordinates) {
+MOVE_RESULT GameController::playerMove(std::tuple<uint8_t, uint8_t, uint8_t, uint8_t> moveCoordinates) {
     if (curr == head && !locked) {
 
         AssessMoveData data(field);
@@ -152,7 +151,7 @@ void AnalysicsController::evaluate(int index, int depth) {
     //engine.evaluate(gameMoves[index], depth);
 }
 
-void AnalysicsController::setMoves(vector<AssessMoveData>& _gameMoves) {
+void AnalysicsController::setMoves(std::vector<AssessMoveData>& _gameMoves) {
     gameMoves = _gameMoves;
 }
 

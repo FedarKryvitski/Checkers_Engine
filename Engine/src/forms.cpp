@@ -3,21 +3,28 @@
 #include <mutex>
 #include <chrono>
 
+namespace Forms {
+
 #define PVP_FORM_SIZE Vector2u{1200, 900}
 #define START_FORM_SIZE Vector2u{760, 850}
 #define ENGINE_FORM_SIZE Vector2u{1200, 900}
 #define ANALYSICS_FORM_SIZE Vector2u{1300, 900}
+
+constexpr int tileSize = 100;
 
 #define EASY_DEPTH 4
 #define MEDIUM_DEPTH 8
 #define HARD_DEPTH 10
 #define IMPOSSIBLE_DEPTH 12
 
-using std::pair, std::lock_guard, std::mutex;
-using namespace sf;
+namespace Style = sf::Style;
+namespace Mouse = sf::Mouse;
 
-TForm::TForm(Vector2u windowSize, const string& title)
-    : window(VideoMode(windowSize), title, Style::Close) {
+using Event = sf::Event;
+using Packet = sf::Packet;
+
+Form::Form(Vector2u windowSize, const std::string& title)
+    : window(sf::VideoMode(windowSize), title, Style::Close) {
 
     window.setFramerateLimit(CURRENT_FPS);
     window.setVerticalSyncEnabled(true);
@@ -26,11 +33,11 @@ TForm::TForm(Vector2u windowSize, const string& title)
     background.setFillColor(Color::White);
 }
 
-TForm::~TForm() {}
+Form::~Form() {}
 
-void TForm::onCreate() { }
+void Form::onCreate() { }
 
-void TForm::poll() {
+void Form::poll() {
 
     onCreate();
 
@@ -65,26 +72,24 @@ void TForm::poll() {
     }
 }
 
-void TForm::draw() {
+void Form::draw() {
     window.clear();
     window.draw(background);
     onDraw();
     window.display();
 }
 
-void TForm::onDraw() const {}
-
-void TForm::onClose() {
+void Form::onClose() {
     window.close();
 }
 
-void TForm::onKeyDown(Keyboard::Key key) {}
+void Form::onKeyDown(Keyboard::Key key) {}
 
-void TForm::onLeftButtonPress(Vector2i position) {}
+void Form::onLeftButtonPress(Vector2i position) {}
 
-void TForm::onLeftButtonRelease(Vector2i position) {}
+void Form::onLeftButtonRelease(Vector2i position) {}
 
-void TForm::onChar(char symbol) {}
+void Form::onChar(char symbol) {}
 
 
 void TAnalysicsForm::onDraw() const {
@@ -96,7 +101,7 @@ void TAnalysicsForm::onDraw() const {
 }
 
 TAnalysicsForm::TAnalysicsForm(std::vector<AssessMoveData>& data) :
-    TForm(ANALYSICS_FORM_SIZE, "Analysics form") {
+    Form(ANALYSICS_FORM_SIZE, "Analysics form") {
 
     control.setMoves(data);
 
@@ -189,7 +194,7 @@ TAnalysicsForm::TAnalysicsForm(std::vector<AssessMoveData>& data) :
 //    }
 //}
 
-void TStartForm::onDraw() const {
+void StartForm::onDraw() const {
     std::ranges::for_each(vLabel, [this](const auto& label) {
         label.draw(window);
     });
@@ -203,7 +208,7 @@ void TStartForm::onDraw() const {
     exitB.draw(window);
 }
 
-TStartForm::TStartForm() : TForm(START_FORM_SIZE, "Start form") {
+StartForm::StartForm() : Form(START_FORM_SIZE, "Start form") {
 
     background.setSize(Vector2f(window.getSize()));
     background.setFillColor(Color::White);
@@ -229,7 +234,7 @@ TStartForm::TStartForm() : TForm(START_FORM_SIZE, "Start form") {
     turn = true;
     depth = IMPOSSIBLE_DEPTH;
 
-    Input tempI;
+    Controls::Input tempI;
     tempI.setThickness(2);
     tempI.setVisible(true);
     tempI.setSize({ 300, 35 });
@@ -337,11 +342,11 @@ TStartForm::TStartForm() : TForm(START_FORM_SIZE, "Start form") {
     draw();
 }
 
-TStartForm::~TStartForm() { }
+StartForm::~StartForm() { }
 
-void TStartForm::onCreate() { }
+void StartForm::onCreate() { }
 
-void TStartForm::onLeftButtonPress(Vector2i mousePosition) {
+void StartForm::onLeftButtonPress(Vector2i mousePosition) {
     if (startB.isPressed(mousePosition)) {
         startB.onPress();
     }
@@ -364,7 +369,7 @@ void TStartForm::onLeftButtonPress(Vector2i mousePosition) {
     }
 }
 
-void TStartForm::onChar(char symbol) {
+void StartForm::onChar(char symbol) {
     vInput[0].onKeyPress(symbol);
     vInput[1].onKeyPress(symbol);
 }
@@ -382,7 +387,7 @@ void TEngineForm::onDraw() const {
 
 void TEngineForm::onClose() {
     //engineThread->join();
-    TForm::onClose();
+    Form::onClose();
 }
 
 void TEngineForm::onLeftButtonPress(Vector2i mousePosition) {
@@ -393,7 +398,7 @@ void TEngineForm::onLeftButtonPress(Vector2i mousePosition) {
         board.flip();
     }
     else if (analysicsButton.isPressed(mousePosition)) {    
-        unique_ptr<TAnalysicsForm> analysicsForm{ new TAnalysicsForm(control.gameMoves)};
+        auto analysicsForm = std::make_unique<TAnalysicsForm>(control.gameMoves);
         analysicsForm->poll();
     }
     else if (board.isPressed(mousePosition)) {
@@ -424,7 +429,7 @@ void TEngineForm::onLeftButtonRelease(Vector2i mousePosition) {
 }
 
 TEngineForm::TEngineForm() : 
-    TForm(ENGINE_FORM_SIZE, "Engine Form") {
+    Form(ENGINE_FORM_SIZE, "Engine Form") {
 
     exitButton.setSize({ 100, 50 });
     exitButton.setCaption("Exit");
@@ -562,7 +567,7 @@ void TEngineForm::engineMove() {
 
 
 
-TPvpForm::TPvpForm() : TForm(PVP_FORM_SIZE, "PvP form") {
+TPvpForm::TPvpForm() : Form(PVP_FORM_SIZE, "PvP form") {
 
     exitB.setSize({ 150, 60 });
     exitB.setThickness(2);
@@ -699,14 +704,14 @@ void TPvpForm::receive() {
                 vMoves.clear();
             }
             else if (result == LOSE) {
-                control.playerMove({ x1, y1, x2, y2 });
+                auto moveResult = control.playerMove({ x1, y1, x2, y2 });
                 lLose.setVisible(true);
             }
             else if (result == ONE_MORE || result == SUCCESS) {
-                control.playerMove({ x1, y1, x2, y2 });
+                auto moveResult = control.playerMove({ x1, y1, x2, y2 });
             }
             else if (result == WIN) {
-                control.playerMove({ x1, y1, x2, y2 });
+                auto moveResult = control.playerMove({ x1, y1, x2, y2 });
                 lWin.setVisible(true);
             }
 
@@ -762,7 +767,7 @@ void TPvpForm::onDraw() const {
 void TPvpForm::loading() {
     while (!connected) {
         wait.setNext();
-        sleep(milliseconds(300));   // condition variable
+        //sleep(milliseconds(300));   // condition variable
     }
 }
 
@@ -852,3 +857,5 @@ void TPvpForm::loading() {
 //    /*socket.disconnect();
 //    listener.close();*/
 //}
+
+} // namespace Forms;

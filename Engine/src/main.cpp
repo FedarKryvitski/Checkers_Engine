@@ -13,6 +13,12 @@
 sf::Font font;
 sf::Image icon;
 
+namespace {
+
+using MainForm = Forms::StartForm;
+
+} // namespace
+
 int main()
 {
     constexpr auto kIconPath = "resources/Images/icon.png";
@@ -36,8 +42,8 @@ int main()
 
     spdlog::info("Font loaded succesfully by path: {}", kFontPath);
 
-    TStartForm mainForm;
-    mainForm.poll();
+    auto form = std::make_unique<MainForm>();
+    form->poll();
 
     return 0;
 }

@@ -1,9 +1,8 @@
 #include "Engine.h"
+
 #include <algorithm>
 #include <future>
 #include <vector>
-
-using std::max, std::min, std::vector, std::future;
 
 constexpr int16_t WHITE_WIN_ASSESS = 1000;
 constexpr int16_t BLACK_WIN_ASSESS = -1000;
@@ -17,7 +16,7 @@ void Engine::fill(AssessMoveData& moveData, uint8_t depth) {
 	uint8_t len = 0;
 	bool ntb = PMFill(field, type, AllMoves, &len, turn, x, y, direction);
 
-	vector<future<AssessMoveData>> futures;
+	std::vector<std::future<AssessMoveData>> futures;
 
 	for (uint8_t i = 0; i < len; i++) {
 		futures.emplace_back(threadPool.enqueue([=, &field]() -> AssessMoveData {
@@ -202,12 +201,12 @@ int16_t Engine::mmAB(AssessMoveData& moveData, int16_t alpha, int16_t beta, uint
 		}
 
 		if (turn) {
-			minmaxEval = max(minmaxEval, eval);
-			alpha = max(alpha, eval);
+			minmaxEval = std::max(minmaxEval, eval);
+			alpha = std::max(alpha, eval);
 		}
 		else {
-			minmaxEval = min(minmaxEval, eval);
-			beta = min(beta, eval);
+			minmaxEval = std::min(minmaxEval, eval);
+			beta = std::min(beta, eval);
 		}
 
 		if (beta <= alpha) {

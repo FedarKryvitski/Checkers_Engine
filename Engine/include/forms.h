@@ -1,19 +1,33 @@
 #pragma once
-
 #include "controls.h"
 #include "GameControllers.h"
 
 #include <SFML/Network.hpp>
+#include <SFML/Graphics.hpp>
 
 #include <array>
 #include <mutex>
 #include <vector>
 #include <memory>
 
-extern Font font;
-extern Image icon;
+extern sf::Font font;
+extern sf::Image icon;
 
-#define CURRENT_FPS 150
+namespace Forms {
+    
+namespace Keyboard = sf::Keyboard;
+
+using RenderWindow = sf::RenderWindow;
+using Vector2f = sf::Vector2f;
+using Vector2i = sf::Vector2i;
+using Vector2u = sf::Vector2u;
+using RectangleShape = sf::RectangleShape;
+using Color = sf::Color;
+
+using Choice = Controls::Choice;
+using Label = Controls::Label;
+
+constexpr int CURRENT_FPS = 150;
 
 static bool turn = true;
 static bool mode = false;
@@ -21,13 +35,11 @@ static int depth = 12;
 //extern TcpSocket socket;
 //extern TcpListener listener;
 
-using std::vector, std::array, std::thread, std::mutex, std::unique_ptr, std::optional, std::string;
-
-class TForm {
+class Form {
 public:
-    TForm(Vector2u windowSize, const string& title);
+    Form(Vector2u windowSize, const std::string& title);
 
-    virtual ~TForm();
+    virtual ~Form();
 
     void poll();
 
@@ -39,7 +51,7 @@ protected:
     
     virtual void onCreate();
     
-    virtual void onDraw() const;
+    virtual void onDraw() const {};
 
     virtual void onClose();
 
@@ -52,9 +64,9 @@ protected:
     virtual void onChar(char symbol);
 };
 
-class TAnalysicsForm final : public TForm {
+class TAnalysicsForm final : public Form {
 public:
-    TAnalysicsForm(vector<AssessMoveData>& data);
+    TAnalysicsForm(std::vector<AssessMoveData>& data);
 
 protected:
     void onDraw() const override;
@@ -62,16 +74,16 @@ protected:
     //void onLeftButtonPress(Vector2i mousePosition) override;
 
 private:
-    Button exitB;
-    Board board;
-    AssessBar bar;
-    Button flipB;
-    ProgressBar pbar;
+    Controls::Button exitB;
+    Controls::Board board;
+    Controls::AssessBar bar;
+    Controls::Button flipB;
+    Controls::ProgressBar pbar;
     AnalysicsController control;
-    CommentSection section;
+    Controls::CommentSection section;
 };
 
-class TEngineForm final: public TForm {
+class TEngineForm final: public Form {
 public:
     TEngineForm();
     ~TEngineForm();
@@ -81,26 +93,25 @@ protected:
 
     void onClose() override;
 
-    void onLeftButtonPress(Vector2i position) override;
+    void onLeftButtonPress(sf::Vector2i position) override;
 
-    void onLeftButtonRelease(Vector2i position) override;
+    void onLeftButtonRelease(sf::Vector2i position) override;
 
 private:
-
-    Button exitButton, flipButton, analysicsButton;
-    Label resultLabel, timeLabel;
-    Board board;
+    Controls::Button exitButton, flipButton, analysicsButton;
+    Controls::Label resultLabel, timeLabel;
+    Controls::Board board;
     GameController control;
-    unique_ptr<thread> engineThread;
-    mutex labelMutex;
+    std::unique_ptr<std::thread> engineThread;
+    std::mutex labelMutex;
 
     bool LeftPressed{ false };
-    Vector2i LeftPressedPosition{};
+    sf::Vector2i LeftPressedPosition{};
     
     void engineMove();
 };
 
-class TPvpForm final : public TForm {
+class TPvpForm final : public Form {
 public:
     TPvpForm();
     ~TPvpForm();
@@ -114,14 +125,14 @@ private:
     bool LeftReleased{ false };
     bool connected{ false };
 
-    vector<int> vMoves;
+    std::vector<int> vMoves;
 
-    CheckersClock clock1, clock2;
-    Button exitB, flipB, analysicsB, drawB, resignB;
-    Board board;
-    TWait wait;
+    Controls::CheckersClock clock1, clock2;
+    Controls::Button exitB, flipB, analysicsB, drawB, resignB;
+    Controls::Board board;
+    Controls::TWait wait;
     GameController control;
-    Label lDraw, lLose, lWin;
+    Controls::Label lDraw, lLose, lWin;
 
     enum Type {
         INIT,
@@ -137,10 +148,10 @@ private:
     void loading();
 };
 
-class TStartForm final : public TForm {
+class StartForm final : public Form {
 public:
-    TStartForm();
-    ~TStartForm();
+    StartForm();
+    ~StartForm();
 
 protected:
     void onCreate() override;
@@ -150,13 +161,15 @@ protected:
     void onChar(char symbol) override;
 
 private:
-    vector<Label> vLabel;
-    vector<Choice> vChoice;
-    vector<Input> vInput;
-    Button startB, exitB;
+    std::vector<Controls::Label> vLabel;
+    std::vector<Controls::Choice> vChoice;
+    std::vector<Controls::Input> vInput;
+    Controls::Button startB, exitB;
 
-    unique_ptr<TEngineForm> engineForm;
-    unique_ptr<TPvpForm> pvpForm;
+    std::unique_ptr<TEngineForm> engineForm;
+    std::unique_ptr<TPvpForm> pvpForm;
     bool pvp{ false };
     bool turn{ true };
 };
+
+} // namespace Forms

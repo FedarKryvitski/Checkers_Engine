@@ -1,12 +1,10 @@
 #pragma once
 #include "PossibleMoves.h"
-#include <vector>
-#include <any>
 #include "ThreadPool.h"
 
-#define THREADS
+#include <vector>
 
-using std::vector;
+#define THREADS
 
 enum MOVE_STATUS {
     FORCED,
@@ -60,7 +58,7 @@ private:
 #ifdef THREADS
     ThreadPool threadPool;
 #endif
-    vector<AssessMoveData> bestMoves;
+    std::vector<AssessMoveData> bestMoves;
 
     uint8_t find(Coord coord);
     void fill(AssessMoveData& moveData, uint8_t depth);

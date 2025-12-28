@@ -3,20 +3,29 @@
 #include "Engine.h"
 
 #include <SFML/Graphics.hpp>
+
 #include <array>
 #include <string>
 #include <thread>
 #include <memory>
 #include <optional>
 
-using namespace sf;
+extern sf::Font font;
 
-extern Font font;
-static constexpr int fontSize = 24;
-static constexpr int tileSize = 100;
+namespace Controls {
 
-using std::vector, std::string, std::thread, std::unique_ptr, std::array,
-std::function, std::tuple, std::optional;
+using VideoMode = sf::VideoMode;
+using Vector2i = sf::Vector2i;
+using Vector2f = sf::Vector2f;
+using Color = sf::Color;
+using RenderWindow = sf::RenderWindow;
+using RectangleShape = sf::RectangleShape;
+using Text = sf::Text;
+using Texture = sf::Texture;
+using CircleShape = sf::CircleShape;
+
+constexpr int fontSize = 24;
+constexpr int tileSize = 100;
 
 class Object {
 public:
@@ -39,9 +48,9 @@ protected:
 class Label final : public Object {
 public: 
     Label();
-    Label(const string& _caption, const Vector2f _pos, bool _visible = true);
+    Label(const std::string& _caption, const Vector2f _pos, bool _visible = true);
 
-    void setText(const string& _text);
+    void setText(const std::string& _text);
     void setPosition(Vector2f position) override;
     void draw(RenderWindow& win) const override;
     void setTextThickness(float thick);
@@ -57,20 +66,20 @@ class Clickable : public Object {
 public:
     Clickable();
     bool isPressed(Vector2i pos) const;
-    void setOnPress(const function<void()>& callback);
+    void setOnPress(const std::function<void()>& callback);
     virtual void onPress();
 
 protected:
-    function<void()> onPressFunction;
+    std::function<void()> onPressFunction;
 };
 
 class Button final : public Clickable {
 public:
     Button();
-    Button(const string& _caption, Vector2f _pos);
-    Button(const string& _caption, Vector2f _position, Vector2f _size);
+    Button(const std::string& _caption, Vector2f _pos);
+    Button(const std::string& _caption, Vector2f _position, Vector2f _size);
 
-    void setCaption(const string& _caption);
+    void setCaption(const std::string& _caption);
     void setPosition(Vector2f position) override;
     void setSize(Vector2f size);
     void onPress() override;
@@ -78,14 +87,19 @@ public:
     void draw(RenderWindow& win) const override;
 
 private:
-    Text caption;
     void normCaption();
+
+private:
+    Text caption;
 };
 
 class Choice final : public Clickable {
 public:
+    using Callback = std::function<void()>;
+
+public:
     Choice();
-    Choice(Vector2f _position, const function<void()>& callback, bool _status, bool _visible = true);
+    Choice(Vector2f _position, const Callback& callback, bool _status, bool _visible = true);
 
     void setPosition(Vector2f position) override;
     void setSize(Vector2f position) override;
@@ -147,12 +161,12 @@ class CommentSection final : public Object{
 public:
     CommentSection();
     void setPosition(Vector2f position) override;
-    void setValues(vector<AssessMoveData>& vdata);
+    void setValues(std::vector<AssessMoveData>& vdata);
     void draw(RenderWindow& win) const override;
 
 private:
-    vector<Text> vText;
-    vector<char> values;
+    std::vector<Text> vText;
+    std::vector<char> values;
 };
 
 class CheckersClock final : public Object {
@@ -169,10 +183,10 @@ public:
 private:
     bool gameIsGoing;
     bool yourTurn;
-    unique_ptr<thread> thread;
+    std::unique_ptr<std::thread> thread;
     int value;
     Text text;
-    string getStringTime(int seconds);
+    std::string getStringTime(int seconds);
     void tictac();
 };
 
@@ -183,7 +197,7 @@ public:
     void releasePiece(Vector2i mousePosition);
     void setPosition(Vector2f _position) override;
     void setField(TField& _field);
-    tuple<uint8_t, uint8_t, uint8_t, uint8_t> getMoveCoordinates();
+    std::tuple<uint8_t, uint8_t, uint8_t, uint8_t> getMoveCoordinates();
     void flip();
     void draw(RenderWindow& win) const override;
     void setComment(MOVE_STATUS comment, uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2);
@@ -193,7 +207,7 @@ private:
 
     TField field{};
     MOVE_STATUS comment{};
-    array<Texture, 5> moveStatusTextures;
+    std::array<Texture, 5> moveStatusTextures;
     Vector2i moveStart{}, moveEnd{};
     bool isCaptured{false};
     bool flipped {false};
@@ -218,7 +232,7 @@ public:
     void setPosition(Vector2f position) override;
     void setSize(Vector2f position) override;
     void setLimit(int lim);
-    string getText();
+    std::string getText();
 
 private:
     bool letters{ false };
@@ -238,9 +252,11 @@ public:
     void draw(RenderWindow& win) const override;
 
 private:
-    array<CircleShape, 6> circlesArray;
+    std::array<CircleShape, 6> circlesArray;
     int currentState{ 0 };
     int radius{ 100 };
 
     void normalizePosition();
 };
+
+} // namespace Controls

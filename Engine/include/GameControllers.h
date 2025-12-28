@@ -1,8 +1,7 @@
 #pragma once
 #include "Engine.h"
-#include <vector>
 
-using std::vector, std::tuple;
+#include <vector>
 
 class GameController final {
 public:
@@ -11,9 +10,9 @@ public:
     int curr{ 0 }, head{ 0 };
     bool turn{true};
 
-    vector<AssessMoveData> gameMoves;
+    std::vector<AssessMoveData> gameMoves;
     GameController();
-    [[nodiscard]] MOVE_RESULT playerMove(tuple<uint8_t, uint8_t, uint8_t, uint8_t>);
+    [[nodiscard]] MOVE_RESULT playerMove(std::tuple<uint8_t, uint8_t, uint8_t, uint8_t>);
     [[nodiscard]] MOVE_RESULT engineMove(uint8_t depth);
     void getPrev();
     void getNext();
@@ -38,10 +37,10 @@ public:
     MOVE_STATUS comment{FORCED};
     uint8_t x1{0}, y1{0}, x2{0}, y2{0};
 
-    vector<AssessMoveData> gameMoves;
+    std::vector<AssessMoveData> gameMoves;
     AnalysicsController();
     void evaluate(int index, int depth);
-    void setMoves(vector<AssessMoveData>& tgameMoves);
+    void setMoves(std::vector<AssessMoveData>& tgameMoves);
     void getPrev();
     void getNext();
     void getCurr();
