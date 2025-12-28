@@ -58,7 +58,7 @@ public:
 
 private:
 #ifdef THREADS
-    ThreadPool<AssessMoveData> threadPool;
+    ThreadPool threadPool;
 #endif
     vector<AssessMoveData> bestMoves;
 
