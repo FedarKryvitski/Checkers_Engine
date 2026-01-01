@@ -15,6 +15,8 @@ find_package(SFML 3 REQUIRED COMPONENTS
 find_package(nlohmann_json REQUIRED)
 find_package(spdlog REQUIRED)
 
+add_subdirectory(utils)
+
 file(GLOB_RECURSE SRC_CPP_FILES "src/*.cpp")
 file(GLOB_RECURSE SRC_ASM_FILES "src/*.asm")
 
@@ -36,4 +38,5 @@ target_link_libraries(
     SFML::Network
     spdlog::spdlog
     nlohmann_json::nlohmann_json
+    utils
 )

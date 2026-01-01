@@ -4,9 +4,6 @@
 #include <SFML/System.hpp>
 #include "spdlog/spdlog.h"
 
-#include <iostream>
-#include <fstream>
-
 //TcpSocket socket;
 //TcpListener listener;
 
