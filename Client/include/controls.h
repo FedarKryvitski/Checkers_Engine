@@ -1,7 +1,4 @@
 #pragma once
-
-#include "Engine.h"
-
 #include <SFML/Graphics.hpp>
 
 #include <array>
@@ -9,6 +6,9 @@
 #include <thread>
 #include <memory>
 #include <optional>
+#include <functional>
+
+#include "PossibleMoves.h"
 
 extern sf::Font font;
 
@@ -157,11 +157,12 @@ private:
     bool isFlipped;
 };
 
-class CommentSection final : public Object{
+class CommentSection final : public Object
+{
 public:
     CommentSection();
     void setPosition(Vector2f position) override;
-    void setValues(std::vector<AssessMoveData>& vdata);
+    //void setValues(std::vector<AssessMoveData>& vdata);
     void draw(RenderWindow& win) const override;
 
 private:
@@ -200,13 +201,13 @@ public:
     std::tuple<uint8_t, uint8_t, uint8_t, uint8_t> getMoveCoordinates();
     void flip();
     void draw(RenderWindow& win) const override;
-    void setComment(MOVE_STATUS comment, uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2);
+    // void setComment(MOVE_STATUS comment, uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2);
 
 private:
     inline Vector2i getPieceCoordinates(Vector2i mousePosition);
 
-    TField field{};
-    MOVE_STATUS comment{};
+    // TField field{};
+    // MOVE_STATUS comment{};
     std::array<Texture, 5> moveStatusTextures;
     Vector2i moveStart{}, moveEnd{};
     bool isCaptured{false};

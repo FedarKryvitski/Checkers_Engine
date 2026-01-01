@@ -1,6 +1,6 @@
 #pragma once
 #include "PossibleMoves.h"
-#include "ThreadPool.h"
+#include <ThreadPool.h>
 
 #include <vector>
 
