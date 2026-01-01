@@ -1,4 +1,4 @@
-#include "GameControllers.h"
+#include "gamecontroller.h"
 
 void GameController::getData(AssessMoveData& source) {
     memcpy(field, source.field, 64);

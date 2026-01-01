@@ -1,7 +1,7 @@
 #pragma once
-#include "PossibleMoves.h"
-#include <ThreadPool.h>
+#include "moves.h"
 
+#include <ThreadPool.h>
 #include <vector>
 
 #define THREADS

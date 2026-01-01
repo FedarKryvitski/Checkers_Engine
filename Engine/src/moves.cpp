@@ -1,4 +1,4 @@
-#include "PossibleMoves.h"
+#include "moves.h"
 
 extern "C" void asmAdd(TAM&, uint8_t*, uint8_t, uint8_t, uint8_t, uint8_t);
 extern "C" void FillDamkaMoves(TField&, TAM&, uint8_t*, uint8_t, uint8_t);
