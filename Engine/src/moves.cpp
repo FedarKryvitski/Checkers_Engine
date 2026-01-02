@@ -1,9 +1,9 @@
 #include "moves.h"
 
-extern "C" void asmAdd(TAM&, uint8_t*, uint8_t, uint8_t, uint8_t, uint8_t);
-extern "C" void FillDamkaMoves(TField&, TAM&, uint8_t*, uint8_t, uint8_t);
+extern "C" void asmAdd(TAllMoves &, uint8_t *, uint8_t, uint8_t, uint8_t, uint8_t);
+extern "C" void FillDamkaMoves(Field &, TAllMoves &, uint8_t *, uint8_t, uint8_t);
 
-bool NTBDamkaOneMore(TField& field, uint8_t x, uint8_t y, bool turn, uint8_t mode) {
+bool NTBDamkaOneMore(Field &field, uint8_t x, uint8_t y, bool turn, uint8_t mode) {
 	if (NTBDamka(field, x, y, turn, mode)) {
 		return true;
 	}
@@ -15,8 +15,7 @@ bool NTBDamkaOneMore(TField& field, uint8_t x, uint8_t y, bool turn, uint8_t mod
 				return true;
 			}
 		}
-	}
-	else if (mode == 2) {
+	} else if (mode == 2) {
 		x--;
 		y++;
 		while (CheckCoord(x, y) && (field[x][y] == 0)) {
@@ -24,8 +23,7 @@ bool NTBDamkaOneMore(TField& field, uint8_t x, uint8_t y, bool turn, uint8_t mod
 				return true;
 			}
 		}
-	}
-	else if (mode == 3) {
+	} else if (mode == 3) {
 		x++;
 		y--;
 		while (CheckCoord(x, y) && (field[x][y] == 0)) {
@@ -33,8 +31,7 @@ bool NTBDamkaOneMore(TField& field, uint8_t x, uint8_t y, bool turn, uint8_t mod
 				return true;
 			}
 		}
-	}
-	else if (mode == 4) {
+	} else if (mode == 4) {
 		x--;
 		y--;
 		while (CheckCoord(x, y) && (field[x][y] == 0)) {
@@ -46,7 +43,8 @@ bool NTBDamkaOneMore(TField& field, uint8_t x, uint8_t y, bool turn, uint8_t mod
 	return false;
 }
 
-void FillDamkaBeatsDiag(TField& field, bool turn, TAM& AllMoves, uint8_t* len, uint8_t x0, uint8_t y0, uint8_t x, uint8_t y, uint8_t mode) {
+void FillDamkaBeatsDiag(Field &field, bool turn, TAllMoves &AllMoves, uint8_t *len, uint8_t x0, uint8_t y0, uint8_t x,
+						uint8_t y, uint8_t mode) {
 	uint8_t temp = 1;
 	if (turn) {
 		temp = 2;
@@ -67,8 +65,7 @@ void FillDamkaBeatsDiag(TField& field, bool turn, TAM& AllMoves, uint8_t* len, u
 				}
 			}
 		}
-	}
-	else if (mode == 2) {
+	} else if (mode == 2) {
 		while (CheckCoord(--x, ++y)) {
 			if (field[x][y] != 0) {
 				break;
@@ -84,8 +81,7 @@ void FillDamkaBeatsDiag(TField& field, bool turn, TAM& AllMoves, uint8_t* len, u
 				}
 			}
 		}
-	}
-	else if (mode == 3) {
+	} else if (mode == 3) {
 		while (CheckCoord(++x, --y)) {
 			if (field[x][y] != 0) {
 				break;
@@ -101,8 +97,7 @@ void FillDamkaBeatsDiag(TField& field, bool turn, TAM& AllMoves, uint8_t* len, u
 				}
 			}
 		}
-	}
-	else if (mode == 4) {
+	} else if (mode == 4) {
 		while (CheckCoord(--x, --y)) {
 			if (field[x][y] != 0) {
 				break;
@@ -119,9 +114,10 @@ void FillDamkaBeatsDiag(TField& field, bool turn, TAM& AllMoves, uint8_t* len, u
 			}
 		}
 	}
-}	
+}
 
-void FillDamkaBeatsForOne(TField& field, bool turn, TAM& AllMoves, uint8_t* len, uint8_t x, uint8_t y, uint8_t mode) {
+void FillDamkaBeatsForOne(Field &field, bool turn, TAllMoves &AllMoves, uint8_t *len, uint8_t x, uint8_t y,
+						  uint8_t mode) {
 	uint8_t x0 = x;
 	uint8_t y0 = y;
 	if (mode != 1) {
@@ -141,20 +137,17 @@ void FillDamkaBeatsForOne(TField& field, bool turn, TAM& AllMoves, uint8_t* len,
 			FillDamkaBeatsDiag(field, turn, AllMoves, len, x0, y0, x, y, 2);
 			FillDamkaBeatsDiag(field, turn, AllMoves, len, x0, y0, x, y, 3);
 		}
-	}
-	else if (mode == 2) {
+	} else if (mode == 2) {
 		while (CheckCoord(--x, ++y) && (field[x][y] == 0)) {
 			FillDamkaBeatsDiag(field, turn, AllMoves, len, x0, y0, x, y, 1);
 			FillDamkaBeatsDiag(field, turn, AllMoves, len, x0, y0, x, y, 4);
 		}
-	}
-	else if (mode == 3) {
+	} else if (mode == 3) {
 		while (CheckCoord(++x, --y) && (field[x][y] == 0)) {
 			FillDamkaBeatsDiag(field, turn, AllMoves, len, x0, y0, x, y, 1);
 			FillDamkaBeatsDiag(field, turn, AllMoves, len, x0, y0, x, y, 4);
 		}
-	}
-	else if (mode == 4) {
+	} else if (mode == 4) {
 		while (CheckCoord(--x, --y) && (field[x][y] == 0)) {
 			FillDamkaBeatsDiag(field, turn, AllMoves, len, x0, y0, x, y, 2);
 			FillDamkaBeatsDiag(field, turn, AllMoves, len, x0, y0, x, y, 3);
@@ -162,7 +155,7 @@ void FillDamkaBeatsForOne(TField& field, bool turn, TAM& AllMoves, uint8_t* len,
 	}
 }
 
-void FillBeatsForOne(TField& field, bool turn, TAM& AllMoves, uint8_t* len, uint8_t x, uint8_t y) {
+void FillBeatsForOne(Field &field, bool turn, TAllMoves &AllMoves, uint8_t *len, uint8_t x, uint8_t y) {
 	if (SBCheck(field, x, y, x + 2, y + 2, turn)) {
 		asmAdd(AllMoves, len, x, y, x + 2, y + 2);
 	}
@@ -177,19 +170,17 @@ void FillBeatsForOne(TField& field, bool turn, TAM& AllMoves, uint8_t* len, uint
 	}
 }
 
-bool FillMoves(TField& field, bool turn, TAM& AllMoves, uint8_t* len) {
+bool FillMoves(Field &field, bool turn, TAllMoves &AllMoves, uint8_t *len) {
 	uint8_t temp = 2;
 	if (turn) {
 		temp = 1;
 	}
 	for (uint8_t i = 0; i < 8; ++i) {
 		for (uint8_t j = 0; j < 8; ++j) {
-			if (field[i][j] == temp){
+			if (field[i][j] == temp) {
 				FillBeatsForOne(field, turn, AllMoves, len, i, j);
-			}
-			else if (field[i][j] == temp + 2) {
+			} else if (field[i][j] == temp + 2) {
 				FillDamkaBeatsForOne(field, turn, AllMoves, len, i, j, 0);
-
 			}
 		}
 	}
@@ -209,8 +200,7 @@ bool FillMoves(TField& field, bool turn, TAM& AllMoves, uint8_t* len) {
 				if (SMCheck(field, x, y, x - 1, y + dy)) {
 					asmAdd(AllMoves, len, x, y, x - 1, y + dy);
 				}
-			}
-			else if (field[x][y] == temp + 2) {
+			} else if (field[x][y] == temp + 2) {
 				FillDamkaMoves(field, AllMoves, len, x, y);
 			}
 		}
@@ -218,18 +208,16 @@ bool FillMoves(TField& field, bool turn, TAM& AllMoves, uint8_t* len) {
 	return false;
 }
 
-bool PMFill(TField& field, MOVE_TYPE type, TAM& AllMoves, uint8_t* len, bool turn, uint8_t x, uint8_t y, uint8_t vector) {
+bool PMFill(Field &field, MoveType type, TAllMoves &AllMoves, uint8_t *len, bool turn, uint8_t x, uint8_t y,
+			uint8_t vector) {
 	if (type) {
 		if (field[x][y] >= 3) {
 			FillDamkaBeatsForOne(field, turn, AllMoves, len, x, y, vector);
-		}
-		else {
+		} else {
 			FillBeatsForOne(field, turn, AllMoves, len, x, y);
 		}
 		return *len > 0;
-	}
-	else {
+	} else {
 		return FillMoves(field, turn, AllMoves, len);
 	}
 }
-

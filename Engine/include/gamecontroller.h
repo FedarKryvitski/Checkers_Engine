@@ -1,58 +1,61 @@
 #pragma once
-#include "Engine.h"
-
 #include <vector>
 
+#include "Engine.h"
+
 class GameController final {
-public:
-    TField field;
-    float assess{0.f};
-    int curr{ 0 }, head{ 0 };
-    bool turn{true};
+   public:
+	GameController();
 
-    std::vector<AssessMoveData> gameMoves;
-    GameController();
-    [[nodiscard]] MOVE_RESULT playerMove(std::tuple<uint8_t, uint8_t, uint8_t, uint8_t>);
-    [[nodiscard]] MOVE_RESULT engineMove(uint8_t depth);
-    void getPrev();
-    void getNext();
-    void getCurr();
+	MoveResult playerMove(Vector4u coordinates);
+	MoveResult engineMove(int depth);
 
-private:
-    Engine engine;
-    MOVE_TYPE type{MOVE};
-    uint8_t x{0}, y{0};
-    MOVE_DIRECTION direction{NONE};
-    bool locked{ false };
+	void getPrev();
+	void getNext();
+	void getCurr();
 
-    void getData(AssessMoveData& source);
-    void setData(AssessMoveData& dest);
+   private:
+	void getData(AssessMoveData &source);
+	void setData(AssessMoveData &dest);
 
+   private:
+	Field field;
+	float assess{0.f};
+	int curr{0}, head{0};
+	bool turn{true};
+
+	std::vector<AssessMoveData> gameMoves;
+
+	Engine engine;
+	MoveType type{MoveType::MOVE};
+	uint8_t x{}, y{};
+	MoveDirection direction{MoveDirection::NONE};
+	bool locked{false};
 };
 
 class AnalysicsController final {
-public:
-    TField field{};
-    float assess{0.f};
-    MOVE_STATUS comment{FORCED};
-    uint8_t x1{0}, y1{0}, x2{0}, y2{0};
+   public:
+	Field field{};
+	float assess{0.f};
+	MoveStatus comment{MoveStatus::FORCED};
+	uint8_t x1{0}, y1{0}, x2{0}, y2{0};
 
-    std::vector<AssessMoveData> gameMoves;
-    AnalysicsController();
-    void evaluate(int index, int depth);
-    void setMoves(std::vector<AssessMoveData>& tgameMoves);
-    void getPrev();
-    void getNext();
-    void getCurr();
+	std::vector<AssessMoveData> gameMoves;
+	AnalysicsController();
+	void evaluate(int index, int depth);
+	void setMoves(std::vector<AssessMoveData> &tgameMoves);
+	void getPrev();
+	void getNext();
+	void getCurr();
 
-private:
-    bool turn;
+   private:
+	bool turn;
 
-    Engine engine;
-    MOVE_TYPE type{MOVE};
-    uint8_t x{ 0 }, y{0};
-    MOVE_DIRECTION direction{ NONE };
-    int curr{ 0 }, head{0};
+	Engine engine;
+	MoveType type{MOVE};
+	uint8_t x{0}, y{0};
+	MoveDirection direction{NONE};
+	int curr{0}, head{0};
 
-    void getData(AssessMoveData& source);
+	void getData(AssessMoveData &source);
 };

@@ -1,65 +1,55 @@
 #pragma once
+#include <array>
 #include <cstdint>
 #include <memory>
 
-typedef uint8_t TField[8][8];
-typedef uint8_t TAM[100][4];
+using Field = std::array<std::array<uint8_t, 8>, 8>;
+using TAllMoves = std::array<std::array<uint8_t, 4>, 100>;
 
-enum MOVE_TYPE {
-	MOVE,
-	BEAT
-};
+enum class MoveType { MOVE, BEAT };
 
-enum MOVE_DIRECTION {
-	NONE,
-	UP_RIGHT,
-	DOWN_RIGHT,
-	DOWN_LEFT,
-	UP_LEFT
-};
+enum class MoveDirection { NONE, UP_RIGHT, DOWN_RIGHT, DOWN_LEFT, UP_LEFT };
 
-struct Coord {
-	uint8_t x1 : 3 {0};
-	uint8_t y1 : 3 {0};
-	uint8_t x2 : 3 {0};
-	uint8_t y2 : 3 {0};
+struct Vector4u {
+	uint8_t x1{};
+	uint8_t y1{};
+	uint8_t x2{};
+	uint8_t y2{};
 
-	bool operator==(const Coord& other) const {
-		return !memcmp(this, &other, sizeof(Coord));
+	bool operator==(const Vector4u &other) const {
+		return x1 == other.x1 && y1 == other.y1 && x2 == other.x2 && y2 == other.y2;
 	}
 
-	void operator=(const uint8_t coord[4]) {
-		x1 = coord[0];
-		y1 = coord[1];
-		x2 = coord[2];
-		y2 = coord[3];
+	void operator=(const Vector4u &other) {
+		x1 = other.x1;
+		y1 = other.y1;
+		x2 = other.x2;
+		y2 = other.y2;
 	}
 };
 
 struct MoveData {
-	MoveData(TField& _field) : field(_field) {};
-
-	TField& field;
-	MOVE_TYPE type : 1 {MOVE};
-	Coord coord;
-	uint8_t x : 3 {0};
-	uint8_t y : 3 {0};
-	MOVE_DIRECTION direction : 3 {NONE};
-	bool turn : 1 {true};
+	Field &field;
+	MoveType type{MoveType::MOVE};
+	Vector4u coord;
+	uint8_t x{};
+	uint8_t y{};
+	MoveDirection direction{MoveDirection::NONE};
+	bool turn{true};
 };
 
-extern "C" MOVE_DIRECTION GetMode(uint8_t, uint8_t, uint8_t, uint8_t, MOVE_DIRECTION);
+extern "C" MoveDirection GetMode(uint8_t, uint8_t, uint8_t, uint8_t, MoveDirection);
 extern "C" bool CheckCoord(uint8_t, uint8_t);
-extern "C" void BInit(TField&);
-extern "C" void Move(TField&, uint8_t, uint8_t, uint8_t, uint8_t);
-extern "C" void Beat(TField&, uint8_t, uint8_t, uint8_t, uint8_t);
-extern "C" bool SMCheck(TField&, uint8_t, uint8_t, uint8_t, uint8_t);
-extern "C" bool SBCheck(TField&, uint8_t, uint8_t, uint8_t, uint8_t, bool);
-extern "C" int getAssess(TField&);
-extern "C" bool NTBDamka(TField&, uint8_t, uint8_t, bool, uint8_t);
-extern "C" void DamkaBeat(TField&, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
-extern "C" uint8_t amountOfDamka(TField&);
+extern "C" void BInit(Field &);
+extern "C" void Move(Field &, uint8_t, uint8_t, uint8_t, uint8_t);
+extern "C" void Beat(Field &, uint8_t, uint8_t, uint8_t, uint8_t);
+extern "C" bool SMCheck(Field &, uint8_t, uint8_t, uint8_t, uint8_t);
+extern "C" bool SBCheck(Field &, uint8_t, uint8_t, uint8_t, uint8_t, bool);
+extern "C" int getAssess(Field &);
+extern "C" bool NTBDamka(Field &, uint8_t, uint8_t, bool, uint8_t);
+extern "C" void DamkaBeat(Field &, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
+extern "C" uint8_t amountOfDamka(Field &);
 
-bool NTBDamkaOneMore(TField& field, uint8_t x, uint8_t y, bool turn, uint8_t mode);
+bool NTBDamkaOneMore(Field &field, uint8_t x, uint8_t y, bool turn, uint8_t mode);
 
-bool PMFill(TField&, MOVE_TYPE, TAM&, uint8_t*, bool type, uint8_t x, uint8_t y, uint8_t vector);
+bool PMFill(Field &, MoveType, TAllMoves &, uint8_t *, bool type, uint8_t x, uint8_t y, uint8_t vector);

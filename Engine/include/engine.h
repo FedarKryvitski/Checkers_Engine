@@ -1,69 +1,65 @@
 #pragma once
-#include "moves.h"
-
 #include <ThreadPool.h>
+
 #include <vector>
 
-#define THREADS
+#include "moves.h"
 
-enum MOVE_STATUS {
-    FORCED,
-    BEST,
-    GOOD,
-    INACCURACY,
-    BLUNDER,
+enum MoveStatus {
+	FORCED,
+	BEST,
+	GOOD,
+	INACCURACY,
+	BLUNDER,
+};
+
+enum MoveResult {
+	INVALID_COORD,
+	ONE_MORE,
+	SUCCESS,
+	WIN,
+	DRAW,
+	LOSE,
 };
 
 struct AssessMoveData {
-    AssessMoveData(TField& _field) : field(_field) {};
+	Field field;
+	MoveType type{MoveType::MOVE};
+	Vector4u coord;
+	uint8_t x{};
+	uint8_t y{};
+	MoveDirection direction{MoveDirection::NONE};
+	int16_t assess{};
+	bool turn{true};
 
-    TField& field;
-    MOVE_TYPE type : 1 {MOVE};
-    Coord coord;
-    uint8_t x : 3 {0};
-    uint8_t y : 3 {0};
-    MOVE_DIRECTION direction : 3 {NONE};
-    bool turn : 1 {true};
-    int16_t assess{0};
-
-    void operator=(const AssessMoveData& other) {
-        memcpy(field, other.field, 64);
-        type = other.type;
-        coord = other.coord;
-        x = other.x;
-        y = other.y;
-        direction = other.direction;
-        turn = other.turn;
-        assess = other.assess;
-    }
+	void operator=(const AssessMoveData &other) {
+		memcpy(field, other.field, 64);
+		type = other.type;
+		coord = other.coord;
+		x = other.x;
+		y = other.y;
+		direction = other.direction;
+		turn = other.turn;
+		assess = other.assess;
+	}
 };
 
-enum MOVE_RESULT {
-    INVALID_COORD,
-    ONE_MORE,
-    SUCCESS,
-    WIN,
-    DRAW,
-    LOSE,
+class Engine final {
+   public:
+	Engine() noexcept;
+
+	MoveResult PlayerMove(AssessMoveData &data);
+	MoveResult EngineMove(AssessMoveData &data, int depth);
+	// void evaluate(AssessMoveData& data, uint8_t depth);
+
+   private:
+	void fill(AssessMoveData &moveData, uint8_t depth);
+	void fill(AssessMoveData &moveData);
+
+	int16_t mmAB(AssessMoveData &moveData, int16_t alpha, int16_t beta, uint8_t depth);
+	uint8_t find(Vector4u coord);
+
+   private:
+	ThreadPool threadPool;
+	std::vector<AssessMoveData> bestMoves;
 };
-
-class Engine {
-public:
-    Engine();
-    [[nodiscard]] MOVE_RESULT PlayerMove(AssessMoveData& data);
-    [[nodiscard]] MOVE_RESULT EngineMove(AssessMoveData& data, uint8_t depth);
-    //void evaluate(AssessMoveData& data, uint8_t depth);
-
-private:
-#ifdef THREADS
-    ThreadPool threadPool;
-#endif
-    std::vector<AssessMoveData> bestMoves;
-
-    uint8_t find(Coord coord);
-    void fill(AssessMoveData& moveData, uint8_t depth);
-    void fill(AssessMoveData& moveData);
-    int16_t mmAB(AssessMoveData& moveData, int16_t alpha, int16_t beta, uint8_t depth);
-};
-
-

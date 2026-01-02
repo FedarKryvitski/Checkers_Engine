@@ -197,7 +197,7 @@ public:
     void catchPiece(Vector2i mousePosition);
     void releasePiece(Vector2i mousePosition);
     void setPosition(Vector2f _position) override;
-    void setField(TField& _field);
+    void setField(Field& _field);
     std::tuple<uint8_t, uint8_t, uint8_t, uint8_t> getMoveCoordinates();
     void flip();
     void draw(RenderWindow& win) const override;
@@ -206,7 +206,7 @@ public:
 private:
     inline Vector2i getPieceCoordinates(Vector2i mousePosition);
 
-    // TField field{};
+    // Field field{};
     // MOVE_STATUS comment{};
     std::array<Texture, 5> moveStatusTextures;
     Vector2i moveStart{}, moveEnd{};
