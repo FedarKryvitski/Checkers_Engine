@@ -3,12 +3,14 @@
 #include <cstdint>
 #include <memory>
 
+struct Vector4u;
+
 using Field = std::array<std::array<uint8_t, 8>, 8>;
-using TAllMoves = std::array<std::array<uint8_t, 4>, 100>;
+using TAllMoves = std::array<Vector4u, 100>;
 
-enum class MoveType { MOVE, BEAT };
+enum MoveType : uint8_t { MOVE, BEAT };
 
-enum class MoveDirection { NONE, UP_RIGHT, DOWN_RIGHT, DOWN_LEFT, UP_LEFT };
+enum MoveDirection : uint8_t { NONE, UP_RIGHT, DOWN_RIGHT, DOWN_LEFT, UP_LEFT };
 
 struct Vector4u {
 	uint8_t x1{};

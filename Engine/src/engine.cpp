@@ -7,9 +7,9 @@ namespace {
 constexpr int kWhiteWinAssess{1000};
 constexpr int kBlackWinAssess{-1000};
 constexpr int kThreadsCount{12};
-}  // namespace
+} // namespace
 
-Engine::Engine() : threadPool(kThreadsCount) {}
+Engine::Engine() noexcept : threadPool(kThreadsCount) {}
 
 void Engine::fill(AssessMoveData &moveData, int depth) {
 	auto &[field, type, coord, x, y, direction, turn, assess] = moveData;
@@ -23,13 +23,13 @@ void Engine::fill(AssessMoveData &moveData, int depth) {
 	for (uint8_t i = 0; i < len; i++) {
 		futures.emplace_back(threadPool.enqueue([=, &field]() -> AssessMoveData {
 			AssessMoveData temp(field);
-			memcpy(temp.field, field, 64);
+			temp.field = field;
 
 			const auto &move = AllMoves[i];
-			uint8_t x1 = move[0];
-			uint8_t y1 = move[1];
-			uint8_t x2 = move[2];
-			uint8_t y2 = move[3];
+			uint8_t x1 = move.x1;
+			uint8_t y1 = move.y1;
+			uint8_t x2 = move.x2;
+			uint8_t y2 = move.y2;
 
 			temp.coord = move;
 
@@ -41,15 +41,15 @@ void Engine::fill(AssessMoveData &moveData, int depth) {
 				}
 				temp.x = x2;
 				temp.y = y2;
-				temp.type = BEAT;
+				temp.type = MoveType::BEAT;
 				temp.direction = GetMode(x1, y1, x2, y2, direction);
 				temp.assess = mmAB(temp, kBlackWinAssess, kWhiteWinAssess, depth);
 			} else {
 				Move(temp.field, x1, y1, x2, y2);
 				temp.x = 0;
 				temp.y = 0;
-				temp.type = MOVE;
-				temp.direction = NONE;
+				temp.type = MoveType::MOVE;
+				temp.direction = MoveDirection::NONE;
 				temp.turn = !temp.turn;
 				temp.assess = mmAB(temp, kBlackWinAssess, kWhiteWinAssess, depth - 1);
 			}
@@ -78,7 +78,7 @@ uint8_t Engine::find(Vector4u coordinates) {
 	return index;
 }
 
-int16_t Engine::mmAB(AssessMoveData &moveData, int16_t alpha, int16_t beta, uint8_t depth) {
+int16_t Engine::mmAB(AssessMoveData &moveData, int16_t alpha, int16_t beta, int depth) {
 	TAllMoves AllMoves;
 	uint8_t len = 0;
 
@@ -105,14 +105,14 @@ int16_t Engine::mmAB(AssessMoveData &moveData, int16_t alpha, int16_t beta, uint
 	for (int i = 0; i < len; i++) {
 		MoveDirection tempDirection{MoveDirection::NONE};
 		Field tempBoard;
-		memcpy(tempBoard, field, 64);
+		tempBoard = field;
 
 		uint8_t x1, y1, x2, y2;
 		auto &coord = AllMoves[i];
-		x1 = coord[0];
-		y1 = coord[1];
-		x2 = coord[2];
-		y2 = coord[3];
+		x1 = coord.x1;
+		y1 = coord.y1;
+		x2 = coord.x2;
+		y2 = coord.y2;
 
 		AssessMoveData newMoveData(tempBoard);
 		newMoveData.x = x2;
@@ -160,26 +160,26 @@ void Engine::fill(AssessMoveData &moveData) {
 	AssessMoveData temp(field);
 
 	for (uint8_t i = 0; i < len; i++) {
-		memcpy(temp.field, field, 64);
+		temp.field = field;
 
 		uint8_t x1, y1, x2, y2;
-		x1 = AllMoves[i][0];
-		y1 = AllMoves[i][1];
-		x2 = AllMoves[i][2];
-		y2 = AllMoves[i][3];
+		x1 = AllMoves[i].x1;
+		y1 = AllMoves[i].y1;
+		x2 = AllMoves[i].x2;
+		y2 = AllMoves[i].y2;
 
 		temp.coord = AllMoves[i];
 		temp.type = type;
 
 		if (ntb) {
 			if (temp.field[x1][y1] >= 3) {
-				DamkaBeat(temp.field, x1, y1, x2, y2, direction);
+				DamkaBeat(temp.field, x1, y1, x2, y2, static_cast<uint8_t>(direction));
 			} else {
 				Beat(temp.field, x1, y1, x2, y2);
 			}
 			temp.x = x2;
 			temp.y = y2;
-			temp.type = BEAT;
+			temp.type = MoveType::BEAT;
 			temp.direction = GetMode(x1, y1, x2, y2, direction);
 		} else {
 			Move(temp.field, x1, y1, x2, y2);
@@ -204,9 +204,9 @@ MoveResult Engine::PlayerMove(AssessMoveData &moveData) {
 		AssessMoveData move = bestMoves[index];
 		type = move.type;
 		direction = move.direction;
-		memcpy(field, move.field, 64);
+		field = move.field;
 
-		if (type == BEAT) {
+		if (type == MoveType::BEAT) {
 			direction = GetMode(x1, y1, x2, y2, direction);
 			x = x2;
 			y = y2;

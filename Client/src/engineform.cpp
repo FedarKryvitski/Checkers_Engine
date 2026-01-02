@@ -101,7 +101,7 @@ EngineForm::~EngineForm() { }
 void EngineForm::engineMove() {
     auto start = std::chrono::high_resolution_clock::now();
 
-    MOVE_RESULT result;
+    MoveResult result;
     do {
         result = control.engineMove(depth);
         board.setField(control.field);
@@ -175,7 +175,7 @@ void EngineForm::engineMove() {
 //                if (turn == control.turn) {
 //                    uint8_t coord[4];
 //                    board.getCoord(LPPos, LRPos, coord);
-//                    MOVE_RESULT result = control.PlayerMove(coord[0], coord[1], coord[2], coord[3]);
+//                    MoveResult result = control.PlayerMove(coord[0], coord[1], coord[2], coord[3]);
 //                    if (result != INVALID_COORD) {
 //                        board.setField(control.field);
 //                        if (result == SUCCESS) {

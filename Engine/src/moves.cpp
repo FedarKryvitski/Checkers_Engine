@@ -210,7 +210,7 @@ bool FillMoves(Field &field, bool turn, TAllMoves &AllMoves, uint8_t *len) {
 
 bool PMFill(Field &field, MoveType type, TAllMoves &AllMoves, uint8_t *len, bool turn, uint8_t x, uint8_t y,
 			uint8_t vector) {
-	if (type) {
+	if (type == MoveType::BEAT) {
 		if (field[x][y] >= 3) {
 			FillDamkaBeatsForOne(field, turn, AllMoves, len, x, y, vector);
 		} else {

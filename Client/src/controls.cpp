@@ -28,7 +28,7 @@ void Board::setPosition(Vector2f position) {
 }
 
 void Board::setField(Field& toSet) {
-    memcpy(field, toSet, 64);
+    field = toSet;
     if (flipped) {
         flip();
         flipped = true;

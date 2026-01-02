@@ -4,7 +4,7 @@
 #include "Engine.h"
 
 class GameController final {
-   public:
+public:
 	GameController();
 
 	MoveResult playerMove(Vector4u coordinates);
@@ -14,11 +14,11 @@ class GameController final {
 	void getNext();
 	void getCurr();
 
-   private:
+private:
 	void getData(AssessMoveData &source);
 	void setData(AssessMoveData &dest);
 
-   private:
+private:
 	Field field;
 	float assess{0.f};
 	int curr{0}, head{0};
@@ -34,7 +34,7 @@ class GameController final {
 };
 
 class AnalysicsController final {
-   public:
+public:
 	Field field{};
 	float assess{0.f};
 	MoveStatus comment{MoveStatus::FORCED};
@@ -48,13 +48,13 @@ class AnalysicsController final {
 	void getNext();
 	void getCurr();
 
-   private:
+private:
 	bool turn;
 
 	Engine engine;
-	MoveType type{MOVE};
+	MoveType type{MoveType::MOVE};
 	uint8_t x{0}, y{0};
-	MoveDirection direction{NONE};
+	MoveDirection direction{MoveDirection::NONE};
 	int curr{0}, head{0};
 
 	void getData(AssessMoveData &source);

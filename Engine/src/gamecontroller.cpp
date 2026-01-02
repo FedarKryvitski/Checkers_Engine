@@ -1,7 +1,7 @@
 #include "gamecontroller.h"
 
 void GameController::getData(AssessMoveData &source) {
-	memcpy(field, source.field, 64);
+	field = source.field;
 	type = source.type;
 	direction = source.direction;
 	x = source.x;
@@ -12,7 +12,7 @@ void GameController::setData(AssessMoveData &dest) {
 	MoveData data(field);
 	data.x = x;
 	data.y = y;
-	memcpy(dest.field, field, 64);
+	dest.field = field;
 	dest.turn = turn;
 	dest.type = type;
 	dest.direction = direction;
@@ -31,7 +31,7 @@ GameController::GameController() {
 	// gameMoves.push_back(temp);
 }
 
-MOVE_RESULT GameController::playerMove(Vector4u moveCoordinates) {
+MoveResult GameController::playerMove(Vector4u moveCoordinates) {
 	if (curr == head && !locked) {
 		AssessMoveData data(field);
 		setData(data);
@@ -42,14 +42,14 @@ MOVE_RESULT GameController::playerMove(Vector4u moveCoordinates) {
 		data.coord.y2 = y2;
 
 		AssessMoveData temp = data;
-		MOVE_RESULT result = engine.PlayerMove(data);
+		MoveResult result = engine.PlayerMove(data);
 		if (result != INVALID_COORD) {
-			memcpy(temp.field, data.field, 64);
+			temp.field = data.field;
 			gameMoves.push_back(temp);
 			getData(data);
-			if (result == SUCCESS) {
+			if (result == MoveResult::SUCCESS) {
 				turn = !turn;
-			} else if (result == WIN) {
+			} else if (result == MoveResult::WIN) {
 				locked = true;
 			}
 			head++;
@@ -57,10 +57,10 @@ MOVE_RESULT GameController::playerMove(Vector4u moveCoordinates) {
 		}
 		return result;
 	}
-	return MOVE_RESULT::INVALID_COORD;
+	return MoveResult::INVALID_COORD;
 }
 
-MOVE_RESULT GameController::engineMove(uint8_t depth) {
+MoveResult GameController::engineMove(int depth) {
 	if (!locked) {
 		getCurr();
 
@@ -68,9 +68,9 @@ MOVE_RESULT GameController::engineMove(uint8_t depth) {
 		setData(data);
 
 		AssessMoveData temp = data;
-		MOVE_RESULT result = engine.EngineMove(data, depth);
+		MoveResult result = engine.EngineMove(data, depth);
 		if (result == ONE_MORE || result == SUCCESS || result == WIN) {
-			memcpy(temp.field, data.field, 64);
+			temp.field = data.field;
 			temp.coord = data.coord;
 			gameMoves.push_back(temp);
 			getData(data);
@@ -91,7 +91,7 @@ void GameController::getPrev() {
 	if (curr > 0) {
 		curr--;
 		AssessMoveData temp = gameMoves[curr];
-		memcpy(field, temp.field, 64);
+		field = temp.field;
 		assess = temp.assess;
 	}
 }
@@ -100,7 +100,7 @@ void GameController::getNext() {
 	if (curr < head) {
 		curr++;
 		AssessMoveData temp = gameMoves[curr];
-		memcpy(field, temp.field, 64);
+		field = temp.field;
 		assess = temp.assess;
 	}
 }
@@ -109,7 +109,7 @@ void GameController::getCurr() {
 	if (curr != head) {
 		curr = head;
 		AssessMoveData temp = gameMoves[curr];
-		memcpy(field, temp.field, 64);
+		field = temp.field;
 		assess = temp.assess;
 	}
 }
