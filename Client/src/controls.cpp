@@ -1,12 +1,13 @@
 #include "controls.h"
+
 #include <algorithm>
 
-using std::string, std::to_string, std::round, std::swap;
+namespace Controls {
 
+using Sprite = sf::Sprite;
 
 Board::Board() {
-
-    static const array<string, 5> texturesPaths = {
+    static const std::array<std::string, 5> texturesPaths = {
         "Image/best.png",
         "Image/blunder.png",
         "Image/forced.png",
@@ -26,8 +27,8 @@ void Board::setPosition(Vector2f position) {
     Object::setPosition(position);
 }
 
-void Board::setField(TField& toSet) {
-    memcpy(field, toSet, 64);
+void Board::setField(Field& toSet) {
+    field = toSet;
     if (flipped) {
         flip();
         flipped = true;
@@ -35,7 +36,7 @@ void Board::setField(TField& toSet) {
     isCaptured = false;
 }
 
-tuple<uint8_t, uint8_t, uint8_t, uint8_t> Board::getMoveCoordinates() {
+std::tuple<uint8_t, uint8_t, uint8_t, uint8_t> Board::getMoveCoordinates() {
     uint8_t startX = static_cast<uint8_t>(moveStart.x);
     uint8_t startY = static_cast<uint8_t>(moveStart.y);
     uint8_t endX = static_cast<uint8_t>(moveEnd.x);
@@ -202,7 +203,7 @@ Label::Label() : text(font) {
     text.setPosition({ 0, 0 });
 }
 
-Label::Label(const string& _caption, const Vector2f _position, bool _visible) : text(font) {
+Label::Label(const std::string& _caption, const Vector2f _position, bool _visible) : text(font) {
     Object::setPosition(_position);
     visible = _visible;
 
@@ -212,7 +213,7 @@ Label::Label(const string& _caption, const Vector2f _position, bool _visible) : 
     text.setPosition(_position);
 }
 
-void Label::setText(const string& _text) {
+void Label::setText(const std::string& _text) {
     text.setString(_text);
 }
 
@@ -293,7 +294,7 @@ bool Clickable::isPressed(Vector2i mousePosition) const {
         (posy - y <= height);
 }
 
-void Clickable::setOnPress(const function<void()>& callback) {
+void Clickable::setOnPress(const std::function<void()>& callback) {
     onPressFunction = callback;
 }
 
@@ -328,18 +329,18 @@ Button::Button() : caption(font) {
     setSize({ 125, 50 });
 }
 
-Button::Button(const string& _caption, Vector2f _position) 
+Button::Button(const std::string& _caption, Vector2f _position) 
     : Button() {
     caption.setString(_caption);
     setPosition(_position);
 }
 
-Button::Button(const string& _caption, Vector2f _position, Vector2f _size) 
+Button::Button(const std::string& _caption, Vector2f _position, Vector2f _size) 
     : Button(_caption, _position) {
     setSize(_size);
 }
 
-void Button::setCaption(const string& _caption) {
+void Button::setCaption(const std::string& _caption) {
     caption.setString(_caption);
     normCaption();
 }
@@ -378,7 +379,7 @@ Choice::Choice() {
     in.setFillColor(Color(30, 30, 30));
 }
 
-Choice::Choice(Vector2f _position, const function<void()>& callback, bool _status, bool _visible) {
+Choice::Choice(Vector2f _position, const Callback& callback, bool _status, bool _visible) {
     status = _status;
     visible = _visible;
     onPressFunction = callback;
@@ -487,7 +488,7 @@ inline void ProgressBar::setTextPosition() {
 
 inline void ProgressBar::setString() {
     const int toSet = static_cast<int>(round(abs(value) * 100));
-    string result = to_string(toSet) + "%";
+    std::string result = std::to_string(toSet) + "%";
     text.setString(result);
 }
 
@@ -575,13 +576,13 @@ inline void AssessBar::setTextPosition() {
 
 inline void AssessBar::setString() {
     float toSet = round(abs(value) * 100) / 100;
-    string result = "";
+    std::string result = "";
     if (toSet > 0.15) {
         if (toSet > 99) {
             result = "win";
         }
         else {
-            result = to_string(toSet);
+            result = std::to_string(toSet);
             const int dot = static_cast<int>(result.find('.'));
             result = result.substr(0, dot + 2);
         }
@@ -752,7 +753,7 @@ void CommentSection::setPosition(Vector2f _position) {
 
 }
 
-void CommentSection::setValues(vector<AssessMoveData>& vdata) {
+void CommentSection::setValues(std::vector<AssessMoveData>& vdata) {
     int white, black, sumwhite, sumblack;
     sumblack = sumwhite = white = black = 0;
     /*for (int i = 1; i < vdata.size(); ++i) {
@@ -871,7 +872,7 @@ void Input::onPress() {
 void Input::onKeyPress(char symbol) {
 
     if (isSelected && visible) {
-        string currentString = text.getString();
+        std::string currentString = text.getString();
         const int size = static_cast<int>(currentString.size());
 
         if (size < maxTextLength) {
@@ -922,7 +923,7 @@ void Input::setLimit(int _maxTextLength) {
     maxTextLength = _maxTextLength;
 }
 
-string Input::getText() {
+std::string Input::getText() {
     return text.getString();
 }
 
@@ -985,8 +986,10 @@ void CheckersClock::tictac() {
     }
 }
 
-string CheckersClock::getStringTime(int seconds) {
-    return to_string(seconds / 60) + ":" + to_string(seconds % 60 / 10) + to_string(seconds % 10);
+std::string CheckersClock::getStringTime(int seconds) {
+    return std::to_string(seconds / 60) + ":" + 
+        std::to_string(seconds % 60 / 10) + 
+        std::to_string(seconds % 10);
 }
 
 CheckersClock::CheckersClock() : Object(), text(font) {
@@ -1037,3 +1040,5 @@ void CheckersClock::stop() {
     gameIsGoing = false;
     //thread->terminate();
 }
+
+} // namespace Controls

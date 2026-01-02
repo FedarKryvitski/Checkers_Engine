@@ -1,0 +1,7 @@
+Language: Cpp
+BasedOnStyle: LLVM
+AccessModifierOffset: -4
+UseTab: Always
+IndentWidth: 4
+TabWidth: 4
+ColumnLimit: 120
