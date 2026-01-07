@@ -7,6 +7,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_library(utils STATIC
     src/ThreadPool.cpp
+    src/ThreadPoolManager.cpp
 )
 
 target_include_directories(utils

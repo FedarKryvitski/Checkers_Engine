@@ -1,9 +1,9 @@
 #include "moves.h"
 
 extern "C" void asmAdd(TAllMoves &, uint8_t *, uint8_t, uint8_t, uint8_t, uint8_t);
-extern "C" void FillDamkaMoves(Field &, TAllMoves &, uint8_t *, uint8_t, uint8_t);
+extern "C" void FillDamkaMoves(const Field &, TAllMoves &, uint8_t *, uint8_t, uint8_t);
 
-bool NTBDamkaOneMore(Field &field, uint8_t x, uint8_t y, bool turn, uint8_t mode) {
+bool NTBDamkaOneMore(const Field &field, uint8_t x, uint8_t y, bool turn, uint8_t mode) {
 	if (NTBDamka(field, x, y, turn, mode)) {
 		return true;
 	}
@@ -43,8 +43,8 @@ bool NTBDamkaOneMore(Field &field, uint8_t x, uint8_t y, bool turn, uint8_t mode
 	return false;
 }
 
-void FillDamkaBeatsDiag(Field &field, bool turn, TAllMoves &AllMoves, uint8_t *len, uint8_t x0, uint8_t y0, uint8_t x,
-						uint8_t y, uint8_t mode) {
+void FillDamkaBeatsDiag(const Field &field, bool turn, TAllMoves &AllMoves, uint8_t *len, uint8_t x0, uint8_t y0,
+						uint8_t x, uint8_t y, uint8_t mode) {
 	uint8_t temp = 1;
 	if (turn) {
 		temp = 2;
@@ -116,7 +116,7 @@ void FillDamkaBeatsDiag(Field &field, bool turn, TAllMoves &AllMoves, uint8_t *l
 	}
 }
 
-void FillDamkaBeatsForOne(Field &field, bool turn, TAllMoves &AllMoves, uint8_t *len, uint8_t x, uint8_t y,
+void FillDamkaBeatsForOne(const Field &field, bool turn, TAllMoves &AllMoves, uint8_t *len, uint8_t x, uint8_t y,
 						  uint8_t mode) {
 	uint8_t x0 = x;
 	uint8_t y0 = y;
@@ -155,7 +155,7 @@ void FillDamkaBeatsForOne(Field &field, bool turn, TAllMoves &AllMoves, uint8_t 
 	}
 }
 
-void FillBeatsForOne(Field &field, bool turn, TAllMoves &AllMoves, uint8_t *len, uint8_t x, uint8_t y) {
+void FillBeatsForOne(const Field &field, bool turn, TAllMoves &AllMoves, uint8_t *len, uint8_t x, uint8_t y) {
 	if (SBCheck(field, x, y, x + 2, y + 2, turn)) {
 		asmAdd(AllMoves, len, x, y, x + 2, y + 2);
 	}
@@ -170,7 +170,7 @@ void FillBeatsForOne(Field &field, bool turn, TAllMoves &AllMoves, uint8_t *len,
 	}
 }
 
-bool FillMoves(Field &field, bool turn, TAllMoves &AllMoves, uint8_t *len) {
+bool FillMoves(const Field &field, bool turn, TAllMoves &AllMoves, uint8_t *len) {
 	uint8_t temp = 2;
 	if (turn) {
 		temp = 1;
@@ -208,7 +208,7 @@ bool FillMoves(Field &field, bool turn, TAllMoves &AllMoves, uint8_t *len) {
 	return false;
 }
 
-bool PMFill(Field &field, MoveType type, TAllMoves &AllMoves, uint8_t *len, bool turn, uint8_t x, uint8_t y,
+bool PMFill(const Field &field, MoveType type, TAllMoves &AllMoves, uint8_t *len, bool turn, uint8_t x, uint8_t y,
 			uint8_t vector) {
 	if (type == MoveType::BEAT) {
 		if (field[x][y] >= 3) {

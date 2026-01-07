@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project (Engine LANGUAGES CXX)
+project(Engine LANGUAGES CXX)
 
 # Only for Windows
 enable_language(ASM_MASM)
@@ -11,12 +11,17 @@ find_package(spdlog REQUIRED)
 
 add_subdirectory(utils)
 
-file(GLOB_RECURSE SRC_CPP_FILES "src/*.cpp")
+SET(SRC_CPP_FILES 
+    "src/engine.cpp"
+    "src/gamecontroller.cpp"
+    "src/moves.cpp"
+    "src/main.cpp"
+)
 file(GLOB_RECURSE SRC_ASM_FILES "src/*.asm")
 
 add_executable(
-    ${PROJECT_NAME} 
-    ${SRC_CPP_FILES} 
+    ${PROJECT_NAME}
+    ${SRC_CPP_FILES}
     ${SRC_ASM_FILES}
 )
 
@@ -26,7 +31,10 @@ target_include_directories(
 )
 
 target_link_libraries(
-    ${PROJECT_NAME} PRIVATE 
+    ${PROJECT_NAME} PRIVATE
     spdlog::spdlog
     utils
 )
+
+enable_testing()
+#add_subdirectory(test)
